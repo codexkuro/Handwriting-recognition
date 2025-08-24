@@ -5,7 +5,7 @@ from tensorflow import keras
 from streamlit_drawable_canvas import st_canvas
 
 # load model
-model = keras.models.load_model('mnist_modelv1.h5', compile=False)
+model = keras.models.load_model('MNISTV1.keras', compile=False)
 
 def main():
     st.markdown("""
