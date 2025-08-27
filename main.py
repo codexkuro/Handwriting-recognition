@@ -4,8 +4,44 @@ import numpy as np
 from tensorflow import keras
 from streamlit_drawable_canvas import st_canvas
 
+
 # load model
 model = keras.models.load_model('MNISTV1.keras', compile=False)
+def create_model_architecture(input_shape=(28, 28, 1), num_classes=10):
+    """
+    Membuat arsitektur model CNN sederhana untuk MNIST
+    """
+    model = keras.Sequential([
+        keras.layers.Reshape((28, 28, 1), input_shape=(28, 28)),
+        keras.layers.Conv2D(28, 3, activation='relu'),
+        keras.layers.Flatten(),
+        keras.layers.Dense(50, activation='relu'),
+        keras.layers.Dense(50, activation='relu'),
+        keras.layers.Dense(50, activation='relu'),
+        keras.layers.Dense(10, activation='sigmoid')
+    ])
+    
+    return model
+
+# Coba approach yang berbeda untuk load model
+try:
+    # Method 1: Standard load
+    model = keras.models.load_model('MNISTMODELCONV2D.keras')
+except:
+    try:
+        # Method 2: Load dengan custom objects (jika ada)
+        model = keras.models.load_model('MNISTMODELCONV2D.keras', compile=True)
+    except:
+        try:
+            # Method 3: Load weights saja
+            model = keras.models.load_model('MNISTMODELCONV2D.keras', compile=False)
+            # Compile manual setelah load
+            model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        except Exception as e:
+            print(f"Error: {e}")
+            # Fallback: Bangun model manual dan load weights
+            model = create_model_architecture()  # Anda perlu definisikan arsitektur model
+            model.load_weights('MNISTMODELCONV2D.keras')
 
 def main():
     st.markdown("""
