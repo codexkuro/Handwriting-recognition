@@ -21,9 +21,13 @@ except:
         
         # Build simple model
         model = keras.Sequential([
-            Flatten(input_shape=(28, 28)),
-            Dense(128, activation='relu'),
-            Dense(10, activation='softmax')
+            keras.layers.Reshape((28, 28, 1), input_shape=(28, 28)),
+            keras.layers.Conv2D(28, 3, activation='relu'),
+            keras.layers.Flatten(),
+            keras.layers.Dense(50, activation='relu'),
+            keras.layers.Dense(50, activation='relu'),
+            keras.layers.Dense(50, activation='relu'),
+            keras.layers.Dense(10, activation='sigmoid')
         ])
         
         model.compile(optimizer='adam',
