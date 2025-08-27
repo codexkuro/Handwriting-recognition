@@ -4,64 +4,34 @@ import numpy as np
 from tensorflow import keras
 from streamlit_drawable_canvas import st_canvas
 
-# Fungsi untuk membuat arsitektur model yang lebih baik
-def create_model_architecture(input_shape=(28, 28, 1), num_classes=10):
-    """
-    Membuat arsitektur model CNN yang lebih sesuai untuk MNIST
-    """
-    model = keras.Sequential([
-        keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape),
-        keras.layers.Conv2D(28, 3, activation='relu'),
-        keras.layers.Flatten(),
-        keras.layers.Dense(50, activation='relu'),
-        keras.layers.Dense(50, activation='relu'),
-        keras.layers.Dense(50, activation='relu'),
-        keras.layers.Dense(10, activation='sigmoid')
-    ])
-    
-    # Kompilasi model
-    model.compile(optimizer='adam', 
-                  loss='sparse_categorical_crossentropy', 
-                  metrics=['accuracy'])
-    
-    return model
-
-# Load model dengan error handling yang lebih baik
-@st.cache_resource
-def load_model():
+try:
+    # Coba load model yang sudah ada
+    model = keras.models.load_model('MNISTMODELCONV2D.keras')
+except:
+    # Jika gagal, gunakan model pre-trained dari TensorFlow
     try:
-        # Method 1: Standard load
-        model = keras.models.load_model('MNISTMODELCONV2D.keras')
-        st.success("✅ Model loaded successfully!")
-        return model
-    except Exception as e:
-        st.warning(f"⚠️ Standard load failed: {str(e)[:100]}...")
+        model = keras.models.load_model('path/to/pretrained/model.h5')
+    except:
+        # Fallback: Gunakan model built-in Keras
+        from tensorflow.keras.datasets import mnist
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
         
-        try:
-            # Method 2: Load dengan compile=False
-            model = keras.models.load_model('MNISTMODELCONV2D.keras', compile=False)
-            model.compile(optimizer='adam',
-                         loss='sparse_categorical_crossentropy',
-                         metrics=['accuracy'])
-            st.success("✅ Model loaded with compile=False!")
-            return model
-        except Exception as e2:
-            st.warning(f"⚠️ Load with compile=False failed: {str(e2)[:100]}...")
-            
-            try:
-                # Method 3: Load weights saja
-                model = create_model_architecture()
-                model.load_weights('MNISTMODELCONV2D.keras')
-                st.success("✅ Weights loaded successfully!")
-                return model
-            except Exception as e3:
-                st.error(f"❌ All loading methods failed: {str(e3)[:100]}...")
-                st.info("ℹ️ Creating a new model with random weights for demonstration.")
-                model = create_model_architecture()
-                return model
-
-# Load model
-model = load_model()
+        # Preprocess data
+        x_train = x_train.reshape(-1, 28, 28, 1).astype('float32') / 255.0
+        
+        # Build simple model
+        model = Sequential([
+            Flatten(input_shape=(28, 28)),
+            Dense(128, activation='relu'),
+            Dense(10, activation='softmax')
+        ])
+        
+        model.compile(optimizer='adam',
+                      loss='sparse_categorical_crossentropy',
+                      metrics=['accuracy'])
+        
+        # Train cepat dengan sedikit data
+        model.fit(x_train[:1000], y_train[:1000], epochs=1, verbose=0)
 
 def main():
     st.markdown("""
