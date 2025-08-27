@@ -20,7 +20,7 @@ except:
         x_train = x_train.reshape(-1, 28, 28, 1).astype('float32') / 255.0
         
         # Build simple model
-        model = Sequential([
+        model = keras.Sequential([
             Flatten(input_shape=(28, 28)),
             Dense(128, activation='relu'),
             Dense(10, activation='softmax')
@@ -138,7 +138,7 @@ def main():
     col3, col4, col5 = st.columns([1, 2, 1])
     with col4:
         # Placeholder untuk foto - ganti dengan path foto Anda
-        st.image('https://placehold.co/350x350/CA3433/FFFFFF?text=Akbar', 
+        st.image('Akbar.jpg', 
                  caption='Programmer Sigma', width=350)
     
     st.markdown("""
