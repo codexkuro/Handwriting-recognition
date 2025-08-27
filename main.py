@@ -6,7 +6,6 @@ from streamlit_drawable_canvas import st_canvas
 
 
 # load model
-model = keras.models.load_model('MNISTV1.keras', compile=False)
 def create_model_architecture(input_shape=(28, 28, 1), num_classes=10):
     """
     Membuat arsitektur model CNN sederhana untuk MNIST
